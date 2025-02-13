@@ -23,6 +23,8 @@ def analise_sentimento(nome_do_produto):
     print(f"Iniciando a análise do produto: {nome_do_produto}")
 
     tentativas = 0
+    tempo_de_espera = 5
+
     while tentativas < 3:
         tentativas += 1
         print(f"Tentativa {tentativas}")
@@ -42,11 +44,16 @@ def analise_sentimento(nome_do_produto):
             )
             salva(f"./dados/analise-{nome_do_produto}", resposta.choices[0].message.content)
             print("Analise concluida com sucesso!")
+            return 
         except openai.error.AuthenticationError as e:
             print(f"Erro de autenticacao: {e}")
         except openai.error.APIError as e:
             print(f"Erro de API: {e}")
             time.sleep(5)
+        except openai.error.RateLimitError as e:
+            print(f"Erro de limite de taxa: {e}")
+            time.sleep(tempo_de_espera)
+            tempo_de_espera *= 2
 
 
 #Metodo ler arquivo
